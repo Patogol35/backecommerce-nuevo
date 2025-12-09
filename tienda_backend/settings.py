@@ -2,49 +2,38 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-load_dotenv ()
+load_dotenv()
 import dj_database_url
-
 # =========================
 # Paths
 # =========================
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 # =========================
 # Seguridad
 # =========================
 SECRET_KEY = os.environ.get("SECRET_KEY", "inseguro-dev")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
-
 ALLOWED_HOSTS = [
-
     "127.0.0.1",
-    "ecommerce-django-nzwa.onrender.com",   # backend en Render
-    "ecommerce-jorge-patricio.vercel.app",  # frontend en Vercel
-    "localhost",                            # opcional para pruebas locales
+    "localhost",
+    "ecommerce-django-nzwa.onrender.com",
+    "ecommerce-jorge-patricio.vercel.app",
 ]
-
 # =========================
 # Aplicaciones
 # =========================
 INSTALLED_APPS = [
-    # Django apps base
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Apps de terceros
     'rest_framework',
     'django_filters',
     'corsheaders',
-
-    # app
     'tienda',
 ]
-
 # =========================
 # Middleware
 # =========================
@@ -58,12 +47,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 # =========================
 # URLs y WSGI
 # =========================
 ROOT_URLCONF = 'tienda_backend.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -79,20 +66,17 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'tienda_backend.wsgi.application'
-
 # =========================
-# Base de datos (Supabase)
+# Base de datos
 # =========================
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=True
+        ssl_require=False  # En local debe ser False
     )
 }
-
 # =========================
 # REST Framework + JWT
 # =========================
@@ -105,16 +89,14 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
 }
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=48),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-
 # =========================
-# Validación de contraseñas
+# Password validators
 # =========================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -122,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
-
 # =========================
 # Internacionalización
 # =========================
@@ -130,32 +111,37 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-
 # =========================
-# Archivos estáticos y media
+# Static & Media
 # =========================
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# =========================
-# Config extra
-# =========================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 # =========================
 # CORS
 # =========================
 CORS_ALLOWED_ORIGINS = [
-    "https://ecommerce-jorge-patricio.vercel.app",  # frontend en Vercel
+    "http://localhost:5173",
+    "https://ecommerce-jorge-patricio.vercel.app",
 ]
-
 # =========================
-# Seguridad extra (HTTPS)
+# Seguridad
 # =========================
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-SECURE_SSL_REDIRECT = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = False  # En local debe ser False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+# =========================
+# Email / Activación
+# =========================
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "noreply@example.com")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+# SMTP Gmail (local)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True

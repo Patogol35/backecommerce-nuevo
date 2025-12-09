@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     ProductoViewSet, CategoriaViewSet, RegisterView, CarritoView,
     agregar_al_carrito, eliminar_del_carrito, actualizar_cantidad_carrito,
-    crear_pedido, ListaPedidosUsuario, user_profile
+    crear_pedido, ListaPedidosUsuario, user_profile, activar_usuario
 )
 router = DefaultRouter()
 router.register(r'productos', ProductoViewSet, basename='producto')
@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     # Auth & registro
     path('api/register/', RegisterView.as_view(), name='register'),
+    path('api/activar/<uidb64>/<token>/', activar_usuario, name='activar_usuario'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # Carrito
